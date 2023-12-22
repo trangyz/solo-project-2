@@ -9,7 +9,10 @@ userController.createUser = (req, res, next) => {
         username,
         password
     })
-        .then(() => next())
+        .then(() => {
+            res.locals.userID = data.id;
+            return next()
+        })
         .catch((err) => {
             return next({
                 log: 'Error in userController.createUser',
@@ -25,6 +28,7 @@ userController.verifyUser = (req, res, next) => {
         .then((data) => {
             bcrypt.compare(req.body.password, data.password, function (err, result) {
                 if (result) {
+                    res.locals.userID = data.id;
                     return next();
                 } else {
                     res.redirect('/signup');

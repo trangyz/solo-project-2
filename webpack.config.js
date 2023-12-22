@@ -35,6 +35,7 @@ module.exports = {
             '/signup': 'http://localhost:3000',
             '/login': 'http://localhost:3000',
             '/client': 'http://localhost:3000',
+            // '/feed': 'http://localhost:3000',
         },
     },
     module: {

@@ -8,6 +8,7 @@ const userSchema = new Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   accounts: [{}],
+  age: Number,
   retirement_age: Number,
   monthly_savings: Number,
   retirement_spend: Number,

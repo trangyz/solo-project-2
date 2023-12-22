@@ -18,6 +18,7 @@ app.use(cookieParser());
 app.use(express.urlencoded());
 app.use('/client', express.static(path.resolve(__dirname, '../client')));
 
+
 //index
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/index.html'));
@@ -28,15 +29,20 @@ app.get('/signup', (req, res) => {
     res.status(200).sendFile(path.resolve(__dirname, '../client/signup.html'));
 });
 
-app.post('/signup', userController.createUser, (req, res) => {
+app.post('/signup', userController.createUser, cookieController.setSSIDCookie, (req, res) => {
     res.status(200).redirect('../feed.html');
 })
 
 // login
-app.post('/login', userController.verifyUser, (req, res) => {
+app.post('/login', userController.verifyUser, cookieController.setSSIDCookie, (req, res) => {
     res.status(200).redirect('../feed.html');
 });
  
+// //feed
+// app.get('/feed', (req, res) => {
+//     res.sendFile(path.resolve(__dirname, '../client/feed.html'));
+// })
+
 
 // 404
 app.use('*', (req, res) => {

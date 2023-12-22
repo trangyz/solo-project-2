@@ -29,12 +29,12 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', userController.createUser, (req, res) => {
-    res.status(200).redirect('../client/feed.html');
+    res.status(200).redirect('../feed.html');
 })
 
 // login
 app.post('/login', userController.verifyUser, (req, res) => {
-    res.status(200).redirect('../client/feed.html');
+    res.status(200).redirect('../feed.html');
 });
  
 

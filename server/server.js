@@ -50,14 +50,14 @@ app.get('/feed/:username', userController.getUser, (req, res) => {
 // })
 
 // add account
-// app.post('/update/:username', userController.addAccount, userController.updateUser, (req, res) => {
-//     return res.status(200).send(res.locals.user);
-// })
+app.post('/update/:username', userController.addAccount, userController.updateUser, (req, res) => {
+    return res.status(200).send(res.locals.user);
+})
 
 // update account
-// app.patch('/update/:username/:account', userController.updateAccount, userController.updateUser, (req, res) => {
-//     return res.status(200).send(res.locals.user);
-// })
+app.patch('/update/:username/:account', userController.updateAccount, userController.updateUser, (req, res) => {
+    return res.status(200).send(res.locals.user);
+})
 
 // update other user info
 app.patch('/update/:username', userController.updateUser, (req, res) => {
@@ -65,9 +65,9 @@ app.patch('/update/:username', userController.updateUser, (req, res) => {
 })
 
 // delete account
-// app.patch('/delete/:username/:account', (req, res) => {
-//     return res.status(200);
-// })
+app.patch('/delete/:username/:account', (req, res) => {
+    return res.status(200);
+})
 
 
 // 404

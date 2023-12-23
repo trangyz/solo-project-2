@@ -1,6 +1,5 @@
 const { User, Account } = require('../models/userModel');
 const bcrypt = require('bcryptjs');
-const { use } = require('../server');
 
 const userController = {};
 
@@ -10,7 +9,7 @@ userController.createUser = (req, res, next) => {
         username,
         password
     })
-        .then(() => {
+        .then((data) => {
             res.locals.userID = data.id;
             return next()
         })
@@ -64,12 +63,12 @@ userController.updateUser = (req, res, next) => {
     const { username } = req.params;
 
     // if not updating account data for an existing user, retrieve info from res.locals.user
-    // if (!res.locals.user) {
-    //     const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
+    if (!res.locals.user) {
+        const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
         // otherwise, retrieve info from request body
-    // } else {
+    } else {
         const { accounts, age, retirement_age, monthly_savings, retirement_spend } = res.locals.user;
-    // };
+    };
 
     if (!age || !retirement_age) {
         return next({
@@ -115,88 +114,88 @@ userController.updateUser = (req, res, next) => {
     }
 }
 
-// userController.addAccount = (req, res, next) => {
-//     const { username } = req.params;
-//     const { account_name, annual_return, balance } = req.body;
-//     User.findOne({ username })
-//         .then((user) => {
-//             Account.create({
-//                 user: username,
-//                 account_name,
-//                 annual_return,
-//                 balance
-//             })
-//                 .then((acc) => {
-//                     user.accounts.push(acc);
-//                     res.locals.user = user;
-//                     return next();
-//                 })
-//         })
-//         .catch((err) => {
-//             return next({
-//                 log: 'Error in userController.addAccount',
-//                 status: 400,
-//                 message: { err: 'Error when adding account' }
-//             })
-//         })
-// }
+userController.addAccount = (req, res, next) => {
+    const { username } = req.params;
+    const { account_name, annual_return, balance } = req.body;
+    User.findOne({ username })
+        .then((user) => {
+            Account.create({
+                user: username,
+                account_name,
+                annual_return,
+                balance
+            })
+                .then((acc) => {
+                    user.accounts.push(acc);
+                    res.locals.user = user;
+                    return next();
+                })
+        })
+        .catch((err) => {
+            return next({
+                log: 'Error in userController.addAccount',
+                status: 400,
+                message: { err: 'Error when adding account' }
+            })
+        })
+}
 
-// userController.updateAccount = (req, res, next) => {
-//     const { username, account } = req.params;
-//     const { user, account_name, annual_return, balance } = req.body;
-//     Account.findOneAndUpdate({ user: username, account_name: account }, {
-//         user,
-//         account_name,
-//         annual_return,
-//         balance,
-//     }, { new: true })
-//         .then((data) => {
-//             res.locals.newAccount = data;
-//             User.findOne({ username })
-//                 .then((user) => {
-//                     res.locals.user = user;
-//                     return next();
-//                 })
-//         })
-//         .catch((err) => {
-//             return next({
-//                 log: 'Error in userController.updateAccount',
-//                 status: 400,
-//                 message: { err: 'Error when updating account' }
-//             })
-//         })
-// }
+userController.updateAccount = (req, res, next) => {
+    const { username, account } = req.params;
+    const { user, account_name, annual_return, balance } = req.body;
+    Account.findOneAndUpdate({ user: username, account_name: account }, {
+        user,
+        account_name,
+        annual_return,
+        balance,
+    }, { new: true })
+        .then((data) => {
+            res.locals.newAccount = data;
+            User.findOne({ username })
+                .then((user) => {
+                    res.locals.user = user;
+                    return next();
+                })
+        })
+        .catch((err) => {
+            return next({
+                log: 'Error in userController.updateAccount',
+                status: 400,
+                message: { err: 'Error when updating account' }
+            })
+        })
+}
 
-// userController.deleteAccount = (req, res, next) => {
-//     const { username, account } = req.params;
-//     Account.findOneAndDelete({ user: username, account_name: account })
-//         .then(() => {
-//             User.findOne({ username })
-//                 .then((user) => {
-//                     const { accounts } = user.accounts;
-//                     for (let i = 0; i < accounts.length; i++) {
-//                         if (accounts[i].account_name === account) {
-//                             accounts[i] = accounts[i + 1];
-//                             if (i === accounts.length - 1) {
-//                                 accounts[i] = undefined;
-//                             };
-//                         };
-//                     };
-//                     User.findOneAndUpdate({ username }, { accounts }, { new: true })
-//                         .then((user) => {
-//                             res.locals.user = user;
-//                             return next();
-//                         })
-//                 })
-//         })
-//         .catch((err) => {
-//             return next({
-//                 log: 'Error in userController.deleteAccount',
-//                 status: 400,
-//                 message: { err: 'Error when deleting account' }
-//             })
-//         })
-// }
+userController.deleteAccount = (req, res, next) => {
+    const { username, account } = req.params;
+    Account.findOneAndDelete({ user: username, account_name: account })
+        .then(() => {
+            User.findOne({ username })
+                .then((user) => {
+                    const { accounts } = user.accounts;
+                    for (let i = 0; i < accounts.length; i++) {
+                        if (accounts[i].account_name === account) {
+                            accounts[i] = accounts[i + 1];
+                            if (i === accounts.length - 1) {
+                                accounts[i] = undefined;
+                            };
+                        };
+                    };
+                    User.findOneAndUpdate({ username }, { accounts }, { new: true })
+                        .then((user) => {
+                            res.locals.user = user;
+                            return next();
+                        })
+                })
+        })
+        .catch((err) => {
+            return next({
+                log: 'Error in userController.deleteAccount',
+                status: 400,
+                message: { err: 'Error when deleting account' }
+            })
+        })
+}
 
 
 module.exports = userController;

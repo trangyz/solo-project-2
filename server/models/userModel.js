@@ -30,7 +30,6 @@ userSchema.pre('save', async function (next) {
 
 const accountSchema = new Schema({
   user: String,
-  user_id: {},
   account_name: String,
   annual_return: Number,
   balance: Number,

@@ -49,10 +49,26 @@ app.get('/feed/:username', userController.getUser, (req, res) => {
 //     res.sendFile(path.resolve(__dirname, '../client/feed.html'));
 // })
 
-// update
+// add account
+// app.post('/update/:username', userController.addAccount, userController.updateUser, (req, res) => {
+//     return res.status(200).send(res.locals.user);
+// })
+
+// update account
+// app.patch('/update/:username/:account', userController.updateAccount, userController.updateUser, (req, res) => {
+//     return res.status(200).send(res.locals.user);
+// })
+
+// update other user info
 app.patch('/update/:username', userController.updateUser, (req, res) => {
-    return res.status(200).send(res.locals.updatedUser);
+    return res.status(200).send(res.locals.user);
 })
+
+// delete account
+// app.patch('/delete/:username/:account', (req, res) => {
+//     return res.status(200);
+// })
+
 
 // 404
 app.use('*', (req, res) => {

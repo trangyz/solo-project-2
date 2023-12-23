@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     entry: {
         index: './client/index.js',
-        feed: './client/feed.js'
+        feed: './client/feed.js',
+        signup: './client/signup.js'
     },
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -22,6 +23,11 @@ module.exports = {
             filename: 'feed.html', // Output file
             template:'./client/feed.html',
             chunks: ['feed']
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'signup.html',
+            template:'./client/signup.html',
+            chunks: ['signup']
         })
     ],
     devServer: {
@@ -32,6 +38,7 @@ module.exports = {
             publicPath: '/'
         },
         proxy: {
+            '/signup': 'http://localhost:3000',
             '/login': 'http://localhost:3000',
             '/client': 'http://localhost:3000',
             '/feed': 'http://localhost:3000',
@@ -53,8 +60,10 @@ module.exports = {
             {
                 test: /.(css|scss)$/,
                 exclude: /node_modules/,
-                use: ['style-loader', 'css-loader'],
-            }
+                use: ['style-loader', 'css-loader', 'sass-loader'],
+            },
+            { test: /\.txt$/, use: 'raw-loader' }
+
         ]
     }
 }

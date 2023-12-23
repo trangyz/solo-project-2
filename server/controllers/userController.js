@@ -101,10 +101,6 @@ userController.updateUser = (req, res, next) => {
                     return next();
                 })
             })
-            // .then((data) => {
-            //     res.locals.updatedUser = data;
-            //     return next();
-            // })
             .catch((err) => {
                 return next({
                     log: 'Error in userController.updateUser',

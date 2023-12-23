@@ -9,13 +9,13 @@ const cookieController = require('./controllers/cookieController');
 const PORT = 3000;
 const app = express();
 
-const mongoURI = 
-'mongodb+srv://trangyz:soloproject@solo-project.trviqj0.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI =
+    'mongodb+srv://trangyz:soloproject@solo-project.trviqj0.mongodb.net/?retryWrites=true&w=majority';
 mongoose.connect(mongoURI);
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use('/client', express.static(path.resolve(__dirname, '../client')));
 
 
@@ -37,12 +37,21 @@ app.post('/signup', userController.createUser, cookieController.setSSIDCookie, (
 app.post('/login', userController.verifyUser, cookieController.setSSIDCookie, (req, res) => {
     res.status(200).redirect('../feed.html');
 });
- 
+
+// get user data
+app.get('/feed/:username', userController.getUser, (req, res) => {
+    res.status(200).send(res.locals.user);
+});
+
 // //feed
 // app.get('/feed', (req, res) => {
 //     res.sendFile(path.resolve(__dirname, '../client/feed.html'));
 // })
 
+// update
+app.patch('/update/:username', userController.updateUser, (req, res) => {
+    return res.status(200).send(res.locals.updatedUser);
+})
 
 // 404
 app.use('*', (req, res) => {

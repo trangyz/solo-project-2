@@ -12,6 +12,8 @@ const userSchema = new Schema({
   retirement_age: Number,
   monthly_savings: Number,
   retirement_spend: Number,
+  future_net_worth: Number,
+  future_retirement_need: Number
 });
 
 

@@ -49,7 +49,12 @@ app.get('/feed/:username', userController.getUser, (req, res) => {
 //     res.sendFile(path.resolve(__dirname, '../client/feed.html'));
 // })
 
-// update
+// add new account
+app.post('/update/:username', userController.addAccount, (req, res) => {
+    return res.status(200);
+})
+
+// update other user data
 app.patch('/update/:username', userController.updateUser, (req, res) => {
     return res.status(200).send(res.locals.updatedUser);
 })

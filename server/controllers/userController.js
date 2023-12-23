@@ -9,7 +9,7 @@ userController.createUser = (req, res, next) => {
         username,
         password
     })
-        .then(() => {
+        .then((data) => {
             res.locals.userID = data.id;
             return next()
         })
@@ -59,10 +59,6 @@ userController.getUser = (req, res, next) => {
         });
 }
 
-userController.getAccounts = (req, res, next) => {
-
-    return next();
-}
 
 userController.updateUser = (req, res, next) => {
     const { username } = req.params;
@@ -109,7 +105,12 @@ userController.updateUser = (req, res, next) => {
                 })
             })
     }
+}
 
+userController.addAccount = (req, res, next) => {
+    const { username } = req.params;
+    const { account_name, balance, annual_return } = req.body;
+    return next();
 }
 
 module.exports = userController;

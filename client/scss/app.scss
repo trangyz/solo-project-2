@@ -7,3 +7,8 @@ input {
     padding: 5pt;
     margin: 8pt;
 }
+
+.column{
+    display: flex;
+    justify-content: space-evenly;
+  }

@@ -166,35 +166,53 @@ userController.updateAccount = (req, res, next) => {
         })
 }
 
-userController.deleteAccount = (req, res, next) => {
+userController.deleteAccount = async (req, res, next) => {
     const { username, account } = req.params;
-    Account.findOneAndDelete({ user: username, account_name: account })
-        .then(() => {
-            User.findOne({ username })
-                .then((user) => {
-                    const { accounts } = user.accounts;
-                    for (let i = 0; i < accounts.length; i++) {
-                        if (accounts[i].account_name === account) {
-                            accounts[i] = accounts[i + 1];
-                            if (i === accounts.length - 1) {
-                                accounts[i] = undefined;
-                            };
-                        };
-                    };
-                    User.findOneAndUpdate({ username }, { accounts }, { new: true })
-                        .then((user) => {
-                            res.locals.user = user;
-                            return next();
-                        })
-                })
-        })
-        .catch((err) => {
-            return next({
-                log: 'Error in userController.deleteAccount',
-                status: 400,
-                message: { err: 'Error when deleting account' }
-            })
-        })
+    try {
+        await Account.findOneAndDelete({ user: username, account_name: account });
+        const user = await User.findOne({ username });
+        const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
+        const updatedUser = await User.findOneAndUpdate(
+            { username }, 
+            { accounts: updatedAccounts }, 
+            { new: true }
+        );
+        res.locals.user = updatedUser;
+        return next();
+    } catch (err) {
+        return next({
+            log: 'Error in userController.deleteAccount',
+            status: 400,
+            message: { err: 'Error occurred during account deletion' }
+        });
+    }
+    // Account.findOneAndDelete({ user: username, account_name: account })
+    //     .then(() => {
+    //         User.findOne({ username })
+    //             .then((user) => {
+    //                 const { accounts } = user.accounts;
+    //                 for (let i = 0; i < accounts.length; i++) {
+    //                     if (accounts[i].account_name === account) {
+    //                         accounts[i] = accounts[i + 1];
+    //                         if (i === accounts.length - 1) {
+    //                             accounts[i] = undefined;
+    //                         };
+    //                     };
+    //                 };
+    //                 User.findOneAndUpdate({ username }, { accounts }, { new: true })
+    //                     .then((user) => {
+    //                         res.locals.user = user;
+    //                         return next();
+    //                     })
+    //             })
+    //     })
+    //     .catch((err) => {
+    //         return next({
+    //             log: 'Error in userController.deleteAccount',
+    //             status: 400,
+    //             message: { err: 'Error when deleting account' }
+    //         })
+    //     })
 }
 
 

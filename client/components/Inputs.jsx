@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import AccountCard from './AccountCard.jsx';
 
 class Inputs extends Component {
     constructor(props) {
@@ -7,24 +8,56 @@ class Inputs extends Component {
         this.state = {
             user: {},
         }
+        this.handleSubmit = this.handleSubmit.bind(this); // Bind the method
+
     }
 
     componentDidMount() {
         fetch('/feed/test1/')
             .then(res => res.json())
             .then(user => {
-                this.setState({
-                    user
-                });
+                this.setState({ user });
+            })
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        const data = {
+            monthly_savings: event.target.monthly_savings.value,
+            age: event.target.age.value,
+            retirement_age: event.target.retirement_age.value,
+            retirement_spend: event.target.retirement_spend.value
+        };
+        fetch('/update/test1', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(user => {
+                this.setState({ user });
             })
     }
 
     render() {
+        const accountsElems = this.state.user && this.state.user.accounts
+        ? this.state.user.accounts.map((acc, i) => (
+            <div key={i}>
+                <AccountCard  balance={acc.balance} account_name={acc.account_name} annual_return={acc.annual_return}/>
+            </div>
+        ))
+        : <div>Loading accounts...</div>;
+
         return (
             <div>
-                <form method="POST" action="/update">                    
+                <form onSubmit={this.handleSubmit}>       
+                    
                     <div>Current accounts</div>
-                    <input name="accounts" type="text" placeholder={this.state.user.monthly_savings}></input>
+                    {/* <input name="accounts" type="text" placeholder={this.state.user.monthly_savings}></input> */}
+                    {accountsElems}
+
 
                     <div>Planned monthly savings</div>
                     <input name="monthly_savings" type="text" placeholder={this.state.user.monthly_savings}></input>

@@ -63,81 +63,91 @@ userController.updateUser = (req, res, next) => {
     const { username } = req.params;
 
     // if not updating account data for an existing user, retrieve info from res.locals.user
-    if (!res.locals.user) {
-        const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
-        // otherwise, retrieve info from request body
-    } else {
-        const { accounts, age, retirement_age, monthly_savings, retirement_spend } = res.locals.user;
-    };
+    // if (!res.locals.user) {
+    const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
+    // otherwise, retrieve info from request body
+    // } else {
+    //     const { accounts, age, retirement_age, monthly_savings, retirement_spend } = res.locals.user;
+    // };
 
-    if (!age || !retirement_age) {
-        return next({
-            log: 'userController.updateUser',
-            status: 400,
-            message: { err: 'Missing information provided' }
-        });
-    } else {
-        User.findOneAndUpdate({ username }, {
-            accounts,
-            age,
-            retirement_age,
-            monthly_savings,
-            retirement_spend,
-        }, { new: true })
-            .then((data) => {
-                // calculate future net worth
-                let future_net_worth;
-                const years = data.retirement_age - data.age;
-                let FV_current_accounts = 0;
-                data.accounts.forEach((account) => {
-                    FV_current_accounts += account.balance * (1 + account.annual_return) ** years
-                });
-                future_net_worth = data.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
-                // calculate future retirement needs
-                let future_retirement_need = 0;
-                const retirement_years = 100 - data.retirement_age;
-                future_retirement_need = data.retirement_spend * 12 * ((1 - (1 + 0.04) ** (-retirement_years)) / 0.04)
-                // update user
-                User.findOneAndUpdate({ username }, { future_net_worth, future_retirement_need }, { new: true })
-                    .then((newUser) => {
-                        res.locals.user = newUser;
-                        return next();
-                    })
-            })
-            .catch((err) => {
-                return next({
-                    log: 'Error in userController.updateUser',
-                    status: 400,
-                    message: { err: 'Error when updating user' }
-                })
-            })
-    }
-}
-
-userController.addAccount = (req, res, next) => {
-    const { username } = req.params;
-    const { account_name, annual_return, balance } = req.body;
-    User.findOne({ username })
-        .then((user) => {
-            Account.create({
-                user: username,
-                account_name,
-                annual_return,
-                balance
-            })
-                .then((acc) => {
-                    user.accounts.push(acc);
-                    res.locals.user = user;
+    // if (!age || !retirement_age) {
+    //     return next({
+    //         log: 'userController.updateUser',
+    //         status: 400,
+    //         message: { err: 'Missing information provided' }
+    //     });
+    // } else {
+    User.findOneAndUpdate({ username }, {
+        accounts,
+        age,
+        retirement_age,
+        monthly_savings,
+        retirement_spend,
+    }, { new: true })
+        .then((data) => {
+            // calculate future net worth
+            let future_net_worth;
+            const years = data.retirement_age - data.age;
+            let FV_current_accounts = 0;
+            data.accounts.forEach((account) => {
+                FV_current_accounts += account.balance * (1 + account.annual_return) ** years
+            });
+            future_net_worth = data.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
+            // calculate future retirement needs
+            let future_retirement_need = 0;
+            const retirement_years = 100 - data.retirement_age;
+            future_retirement_need = data.retirement_spend * 12 * ((1 - (1 + 0.04) ** (-retirement_years)) / 0.04)
+            // update user
+            User.findOneAndUpdate({ username }, { future_net_worth, future_retirement_need }, { new: true })
+                .then((newUser) => {
+                    res.locals.user = newUser;
                     return next();
                 })
         })
         .catch((err) => {
             return next({
-                log: 'Error in userController.addAccount',
+                log: 'Error in userController.updateUser',
                 status: 400,
-                message: { err: 'Error when adding account' }
+                message: { err: 'Error when updating user' }
             })
         })
+    // }
+}
+
+userController.addAccount = async (req, res, next) => {
+    const { username } = req.params;
+    const { account_name, annual_return, balance } = req.body;
+    try {
+        newAccount = await Account.create({
+            user: username,
+            account_name,
+            annual_return,
+            balance
+        });
+        const user = await User.findOne({ username });
+        const updatedAccounts = [...user.accounts, newAccount];
+
+        const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
+
+        const updatedUser = await User.findOneAndUpdate(
+            { username },
+            { 
+                accounts: updatedAccounts, 
+                future_net_worth, 
+                future_retirement_need 
+            },
+            { new: true }
+        );
+
+        res.locals.user = updatedUser;
+        return next();
+    } catch (error) {
+        return next({
+            log: 'Error in userController.addAccount',
+            status: 400,
+            message: { err: 'Error when adding account' }
+        })
+    }
 }
 
 userController.updateAccount = (req, res, next) => {
@@ -167,14 +177,16 @@ userController.updateAccount = (req, res, next) => {
 }
 
 userController.deleteAccount = async (req, res, next) => {
+    console.log('running')
     const { username, account } = req.params;
+    console.log(username + account);
     try {
         await Account.findOneAndDelete({ user: username, account_name: account });
         const user = await User.findOne({ username });
         const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
         const updatedUser = await User.findOneAndUpdate(
-            { username }, 
-            { accounts: updatedAccounts }, 
+            { username },
+            { accounts: updatedAccounts },
             { new: true }
         );
         res.locals.user = updatedUser;
@@ -215,5 +227,22 @@ userController.deleteAccount = async (req, res, next) => {
     //     })
 }
 
+
+const calculateFinancials = async (user, updatedAccounts = user.accounts) => {
+    let future_net_worth = 0;
+    let future_retirement_need = 0;
+
+    const years = user.retirement_age - user.age;
+    let FV_current_accounts = 0;
+    updatedAccounts.forEach((account) => {
+        FV_current_accounts += account.balance * (1 + account.annual_return) ** years
+    });
+    future_net_worth = user.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
+
+    const retirement_years = 100 - user.retirement_age;
+    future_retirement_need = user.retirement_spend * 12 * ((1 - (1 + 0.04) ** (-retirement_years)) / 0.04)
+
+    return { future_net_worth, future_retirement_need };
+};
 
 module.exports = userController;

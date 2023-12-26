@@ -154,10 +154,20 @@ userController.updateAccount = async (req, res, next) => {
         }, { new: true });
         console.log(`updated newaccount to ${newAccount}`)
         const user = await User.findOne({ username });
-        const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
-        console.log(`filtered accounts are ${updatedAccounts}`)
-        updatedAccounts.push(newAccount);
-        console.log(`updated new list of accounts to to ${updatedAccounts}`)
+        let updatedAccounts = [];
+        for (let i = 0; i < user.accounts.length; i++) {
+            console.log(`${user.accounts[i].account_name} is equal to ${account}`)
+            if (user.accounts[i].account_name === account) {
+                updatedAccounts.push(newAccount);
+            } else {
+                updatedAccounts.push(user.accounts[i]);
+            }
+        }
+        // console.log(updatedAccounts);
+        // const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
+        // console.log(`filtered accounts are ${updatedAccounts}`)
+        // updatedAccounts.push(newAccount);
+        // console.log(`updated new list of accounts to to ${updatedAccounts}`)
 
         const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
         const updatedUser = await User.findOneAndUpdate(

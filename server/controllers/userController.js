@@ -106,6 +106,7 @@ userController.updateUser = async (req, res, next) => {
 userController.addAccount = async (req, res, next) => {
     const { username } = req.params;
     const { account_name, annual_return, balance } = req.body;
+    console.log(account_name, annual_return, balance);
     try {
         newAccount = await Account.create({
             user: username,

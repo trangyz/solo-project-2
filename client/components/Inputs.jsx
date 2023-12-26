@@ -11,6 +11,8 @@ class Inputs extends Component {
             user: {},
         }
         this.handleSubmit = this.handleSubmit.bind(this); // Bind the method
+        this.deleteAccount = this.deleteAccount.bind(this);
+        this.updateAccount = this.updateAccount.bind(this);
         this.username = 'test1'
     }
 
@@ -22,20 +24,38 @@ class Inputs extends Component {
             })
     }
 
-    // deleteAccount(account_name) {
-    //     fetch(`/delete/${username}/${account_name}`, {
-    //         method: 'DELETE',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //     .then((res) => res.json())
-    //     .then(user => {
-    //         this.setState({ user });
-    //     })
-    //     .catch((err) => console.log('App: delete account: ERROR: ', err));
+    updateAccount(account_name, annual_return, balance) {
+        fetch(`/update/${this.username}/${account_name}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                account_name,
+                annual_return,
+                balance
+            })
+        })
+        .then((res) => res.json())
+        .then(user => {
+            this.setState ({ user });
+        })
+        .catch((err) => console.log('App: update account: ERROR: ', err))
+    }
 
-    // }
+    deleteAccount(account_name) {
+        fetch(`/delete/${this.username}/${account_name}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => res.json())
+        .then(user => {
+            this.setState({ user });
+        })
+        .catch((err) => console.log('App: delete account: ERROR: ', err));
+    }
 
     handleSubmit(event) {
         event.preventDefault();
@@ -62,7 +82,13 @@ class Inputs extends Component {
         const accountsElems = this.state.user && this.state.user.accounts
         ? this.state.user.accounts.map((acc, i) => (
             <div key={i}>
-                <AccountCard  balance={acc.balance} account_name={acc.account_name} annual_return={acc.annual_return}/>
+                <AccountCard  
+                balance={acc.balance} 
+                account_name={acc.account_name} 
+                annual_return={acc.annual_return} 
+                updateAccount={this.updateAccount}
+                deleteAccount={this.deleteAccount}
+                />
             </div>
         ))
         : <div>Loading accounts...</div>;

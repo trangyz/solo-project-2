@@ -142,17 +142,25 @@ userController.addAccount = async (req, res, next) => {
 }
 
 userController.updateAccount = async (req, res, next) => {
+    console.log('updateaccount running')
     const { username, account } = req.params;
+    console.log(`received ${username} and ${account} from req.params`)
     const { account_name, annual_return, balance } = req.body;
+    console.log(`received ${account_name}, ${annual_return} and ${balance} from req.body`)
+
     try {
         const newAccount = await Account.findOneAndUpdate({ user: username, account_name: account }, {
             account_name,
             annual_return,
             balance,
         }, { new: true });
+        console.log(`updated newaccount to ${newAccount}`)
         const user = await User.findOne({ username });
         const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
+        console.log(`filtered accounts are ${updatedAccounts}`)
         updatedAccounts.push(newAccount);
+        console.log(`updated new list of accounts to to ${updatedAccounts}`)
+
         const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
         const updatedUser = await User.findOneAndUpdate(
             { username },
@@ -163,6 +171,7 @@ userController.updateAccount = async (req, res, next) => {
             },
             { new: true }
         );
+        console.log(`updated user is ${updatedUser}`)
         res.locals.user = updatedUser;
         return next();
     } catch (error) {
@@ -178,9 +187,11 @@ userController.deleteAccount = async (req, res, next) => {
     const { username, account } = req.params;
     try {
         await Account.findOneAndDelete({ user: username, account_name: account });
+
         const user = await User.findOne({ username });
         const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
         const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
+
         const updatedUser = await User.findOneAndUpdate(
             { username },
             {
@@ -190,7 +201,6 @@ userController.deleteAccount = async (req, res, next) => {
             },
             { new: true }
         );
-
         res.locals.user = updatedUser;
         return next();
     } catch (err) {
@@ -210,7 +220,7 @@ const calculateFinancials = (user, updatedAccounts = user.accounts) => {
     const years = user.retirement_age - user.age;
     let FV_current_accounts = 0;
     updatedAccounts.forEach((account) => {
-        FV_current_accounts += account.balance * (1 + account.annual_return) ** years
+        FV_current_accounts += account.balance * ((1 + account.annual_return) ** years)
     });
     future_net_worth = user.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
 

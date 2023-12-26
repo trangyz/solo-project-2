@@ -42,8 +42,9 @@ app.post('/login', userController.verifyUser, cookieController.setSSIDCookie, se
 });
 
 // get user data
-app.get('/feed/:username', sessionController.isLoggedIn, userController.getUser, (req, res) => {
-    res.status(200).send(res.locals.user);
+app.get('/feed/', sessionController.isLoggedIn, (req, res) => {
+    //userController.getUser, 
+    res.status(200).json(res.locals.user);
 });
 
 // //feed

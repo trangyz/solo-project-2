@@ -10,6 +10,7 @@ userController.createUser = (req, res, next) => {
         password
     })
         .then((data) => {
+            res.locals.user = data;
             res.locals.userID = data.id;
             return next()
         })
@@ -24,10 +25,11 @@ userController.createUser = (req, res, next) => {
 
 userController.verifyUser = (req, res, next) => {
     const { username, password } = req.body;
-    User.findOne({ username }, 'password')
+    User.findOne({ username })
         .then((data) => {
-            bcrypt.compare(req.body.password, data.password, function (err, result) {
+            bcrypt.compare(password, data.password, function (err, result) {
                 if (result) {
+                    res.locals.user = data;
                     res.locals.userID = data.id;
                     return next();
                 } else {
@@ -41,7 +43,7 @@ userController.verifyUser = (req, res, next) => {
 }
 
 userController.getUser = (req, res, next) => {
-    const { username } = req.params;
+    const { username } = res.locals.user;
     User.findOne({ username })
         .then((user) => {
             // if (!user) {
@@ -61,6 +63,7 @@ userController.getUser = (req, res, next) => {
 
 userController.updateUser = async (req, res, next) => {
     const { username } = req.params;
+    console.log(`received ${username} from req.params`)
 
     // if not updating account data for an existing user, retrieve info from res.locals.user
     // if (!res.locals.user) {

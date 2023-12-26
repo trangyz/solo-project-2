@@ -8,24 +8,32 @@ class Inputs extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: {},
+            user: {
+                username: '',
+                monthly_savings: '',
+                age: '',
+                retirement_age: '',
+                retirement_spend: '',
+            },
         }
         this.handleSubmit = this.handleSubmit.bind(this); // Bind the method
         this.deleteAccount = this.deleteAccount.bind(this);
         this.updateAccount = this.updateAccount.bind(this);
-        this.username = 'test1'
+        // this.username = 'test1'
     }
 
-    componentDidMount() {        
-        fetch(`/feed/${this.username}/`)
-            .then(res => res.json())
+    componentDidMount() {
+        fetch(`/feed/`)
+            .then(res => {
+                return res.json()
+            })
             .then(user => {
                 this.setState({ user });
             })
     }
 
     updateAccount(account_name, annual_return, balance) {
-        fetch(`/update/${this.username}/${account_name}`, {
+        fetch(`/update/${this.state.user.username}/${account_name}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,25 +44,25 @@ class Inputs extends Component {
                 balance
             })
         })
-        .then((res) => res.json())
-        .then(user => {
-            this.setState ({ user });
-        })
-        .catch((err) => console.log('App: update account: ERROR: ', err))
+            .then((res) => res.json())
+            .then(user => {
+                this.setState({ user });
+            })
+            .catch((err) => console.log('App: update account: ERROR: ', err))
     }
 
     deleteAccount(account_name) {
-        fetch(`/delete/${this.username}/${account_name}`, {
+        fetch(`/delete/${this.state.user.username}/${account_name}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then((res) => res.json())
-        .then(user => {
-            this.setState({ user });
-        })
-        .catch((err) => console.log('App: delete account: ERROR: ', err));
+            .then((res) => res.json())
+            .then(user => {
+                this.setState({ user });
+            })
+            .catch((err) => console.log('App: delete account: ERROR: ', err));
     }
 
     handleSubmit(event) {
@@ -65,7 +73,7 @@ class Inputs extends Component {
             retirement_age: event.target.retirement_age.value,
             retirement_spend: event.target.retirement_spend.value
         };
-        fetch(`/update/${this.username}`, {
+        fetch(`/update/${this.state.user.username}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -80,46 +88,53 @@ class Inputs extends Component {
 
     render() {
         const accountsElems = this.state.user && this.state.user.accounts
-        ? this.state.user.accounts.map((acc, i) => (
-            <div key={i}>
-                <AccountCard  
-                balance={acc.balance} 
-                account_name={acc.account_name} 
-                annual_return={acc.annual_return} 
-                updateAccount={this.updateAccount}
-                deleteAccount={this.deleteAccount}
-                />
-            </div>
-        ))
-        : <div>Loading accounts...</div>;
+            ? this.state.user.accounts.map((acc, i) => (
+                <div key={i}>
+                    <AccountCard
+                        balance={acc.balance}
+                        account_name={acc.account_name}
+                        annual_return={acc.annual_return}
+                        updateAccount={this.updateAccount}
+                        deleteAccount={this.deleteAccount}
+                    />
+                </div>
+            ))
+            : <div>Loading accounts...</div>;
+        if (!this.state.user) {
+            return (
+                <div>Loading...</div>
+            )
+        } else {
+            console.log(`rendering while state is ${this.state.user.username}`)
 
-        return (
-            <div>
-                <form onSubmit={this.handleSubmit}>       
-                    
-                    <div>Current accounts</div>
-                    {accountsElems}
+            return (
+                <div>
+                    <form onSubmit={this.handleSubmit}>
 
-                    <div>Planned monthly savings</div>
-                    <input name="monthly_savings" type="text" placeholder={this.state.user.monthly_savings}></input>
+                        <div>Current accounts</div>
+                        {accountsElems}
 
-                    <div>Current age</div>
-                    <input name="age" type="text" placeholder={this.state.user.age}></input>
+                        <div>Planned monthly savings</div>
+                        <input name="monthly_savings" type="text" placeholder={this.state.user.monthly_savings}></input>
 
-                    <div>Planned retirement age</div>
-                    <input name="retirement_age" type="text" placeholder={this.state.user.retirement_age}></input>
+                        <div>Current age</div>
+                        <input name="age" type="text" placeholder={this.state.user.age}></input>
 
-                    <div>Monthly retirement spend</div>
-                    <input name="retirement_spend" type="text" placeholder={this.state.user.retirement_spend}></input>
+                        <div>Planned retirement age</div>
+                        <input name="retirement_age" type="text" placeholder={this.state.user.retirement_age}></input>
 
-                    <div><input type="submit" value="Calculate"></input></div>
-                </form>
+                        <div>Monthly retirement spend</div>
+                        <input name="retirement_spend" type="text" placeholder={this.state.user.retirement_spend}></input>
 
-                <div>You will have ${Math.round(this.state.user.future_net_worth)}.</div>
-                <div>You will need ${Math.round(this.state.user.future_retirement_need)}.</div>
+                        <div><input type="submit" value="Calculate"></input></div>
+                    </form>
 
-            </div>
-        )
+                    <div>You will have ${Math.round(this.state.user.future_net_worth)}.</div>
+                    <div>You will need ${Math.round(this.state.user.future_retirement_need)}.</div>
+
+                </div>
+            )
+        }
     }
 }
 

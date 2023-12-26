@@ -1,14 +1,18 @@
 body {
-    background: lightBlue;
-    font-family: Arial;
-  }
-
-input {
-    padding: 5pt;
-    margin: 8pt;
+  background: lightBlue;
+  font-family: Arial;
 }
 
-.column{
-    display: flex;
-    justify-content: space-evenly;
-  }
+input {
+  padding: 5pt;
+  margin: 8pt;
+}
+
+.column {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.account-card {
+  display: flex;
+}

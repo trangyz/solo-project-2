@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import AccountCard from './AccountCard.jsx';
+import Cookies from 'js-cookie';
+
 
 class Inputs extends Component {
     constructor(props) {
@@ -9,16 +11,31 @@ class Inputs extends Component {
             user: {},
         }
         this.handleSubmit = this.handleSubmit.bind(this); // Bind the method
-
+        this.username = 'test1'
     }
 
-    componentDidMount() {
-        fetch('/feed/test1/')
+    componentDidMount() {        
+        fetch(`/feed/${this.username}/`)
             .then(res => res.json())
             .then(user => {
                 this.setState({ user });
             })
     }
+
+    // deleteAccount(account_name) {
+    //     fetch(`/delete/${username}/${account_name}`, {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //     .then((res) => res.json())
+    //     .then(user => {
+    //         this.setState({ user });
+    //     })
+    //     .catch((err) => console.log('App: delete account: ERROR: ', err));
+
+    // }
 
     handleSubmit(event) {
         event.preventDefault();
@@ -28,7 +45,7 @@ class Inputs extends Component {
             retirement_age: event.target.retirement_age.value,
             retirement_spend: event.target.retirement_spend.value
         };
-        fetch('/update/test1', {
+        fetch(`/update/${this.username}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,9 +72,7 @@ class Inputs extends Component {
                 <form onSubmit={this.handleSubmit}>       
                     
                     <div>Current accounts</div>
-                    {/* <input name="accounts" type="text" placeholder={this.state.user.monthly_savings}></input> */}
                     {accountsElems}
-
 
                     <div>Planned monthly savings</div>
                     <input name="monthly_savings" type="text" placeholder={this.state.user.monthly_savings}></input>

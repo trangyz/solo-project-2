@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 
 const userController = require('./controllers/userController');
 const cookieController = require('./controllers/cookieController');
+const sessionController = require('./controllers/sessionController');
+
 
 const PORT = 3000;
 const app = express();
@@ -30,17 +32,17 @@ app.get('/signup', (req, res) => {
     // res.status(200).sendFile(path.resolve(__dirname, '../client/signup.html'));
 });
 
-app.post('/signup', userController.createUser, cookieController.setSSIDCookie, (req, res) => {
+app.post('/signup', userController.createUser, cookieController.setSSIDCookie, sessionController.startSession, (req, res) => {
     res.status(200).redirect('../feed.html');
 })
 
 // login
-app.post('/login', userController.verifyUser, cookieController.setSSIDCookie, (req, res) => {
+app.post('/login', userController.verifyUser, cookieController.setSSIDCookie, sessionController.startSession, (req, res) => {
     res.status(200).redirect('../feed.html');
 });
 
 // get user data
-app.get('/feed/:username', userController.getUser, (req, res) => {
+app.get('/feed/:username', sessionController.isLoggedIn, userController.getUser, (req, res) => {
     res.status(200).send(res.locals.user);
 });
 
@@ -55,7 +57,7 @@ app.post('/update/:username', userController.addAccount, (req, res) => {
 })
 
 // update account
-app.patch('/update/:username/:account', userController.updateAccount, userController.updateUser, (req, res) => {
+app.patch('/update/:username/:account', userController.updateAccount, (req, res) => {
     return res.status(200).send(res.locals.user);
 })
 

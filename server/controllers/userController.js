@@ -59,7 +59,7 @@ userController.getUser = (req, res, next) => {
         });
 }
 
-userController.updateUser = (req, res, next) => {
+userController.updateUser = async (req, res, next) => {
     const { username } = req.params;
 
     // if not updating account data for an existing user, retrieve info from res.locals.user
@@ -77,41 +77,33 @@ userController.updateUser = (req, res, next) => {
     //         message: { err: 'Missing information provided' }
     //     });
     // } else {
-    User.findOneAndUpdate({ username }, {
-        accounts,
-        age,
-        retirement_age,
-        monthly_savings,
-        retirement_spend,
-    }, { new: true })
-        .then((data) => {
-            // calculate future net worth
-            let future_net_worth;
-            const years = data.retirement_age - data.age;
-            let FV_current_accounts = 0;
-            data.accounts.forEach((account) => {
-                FV_current_accounts += account.balance * (1 + account.annual_return) ** years
-            });
-            future_net_worth = data.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
-            // calculate future retirement needs
-            let future_retirement_need = 0;
-            const retirement_years = 100 - data.retirement_age;
-            future_retirement_need = data.retirement_spend * 12 * ((1 - (1 + 0.04) ** (-retirement_years)) / 0.04)
-            // update user
-            User.findOneAndUpdate({ username }, { future_net_worth, future_retirement_need }, { new: true })
-                .then((newUser) => {
-                    res.locals.user = newUser;
-                    return next();
-                })
-        })
-        .catch((err) => {
-            return next({
-                log: 'Error in userController.updateUser',
-                status: 400,
-                message: { err: 'Error when updating user' }
-            })
-        })
-    // }
+    try {
+        const user = await User.findOneAndUpdate({ username }, {
+            accounts,
+            age,
+            retirement_age,
+            monthly_savings,
+            retirement_spend,
+        }, { new: true });
+        const { future_net_worth, future_retirement_need } = calculateFinancials(user);
+
+        const updatedUser = await User.findOneAndUpdate(
+            { username },
+            {
+                future_net_worth,
+                future_retirement_need
+            },
+            { new: true }
+        );
+        res.locals.user = updatedUser;
+        return next();
+    } catch (error) {
+        return next({
+            log: 'Error in userController.updateUser',
+            status: 400,
+            message: { err: 'Error when updating user' }
+        });
+    }
 }
 
 userController.addAccount = async (req, res, next) => {
@@ -131,14 +123,13 @@ userController.addAccount = async (req, res, next) => {
 
         const updatedUser = await User.findOneAndUpdate(
             { username },
-            { 
-                accounts: updatedAccounts, 
-                future_net_worth, 
-                future_retirement_need 
+            {
+                accounts: updatedAccounts,
+                future_net_worth,
+                future_retirement_need
             },
             { new: true }
         );
-
         res.locals.user = updatedUser;
         return next();
     } catch (error) {
@@ -150,45 +141,56 @@ userController.addAccount = async (req, res, next) => {
     }
 }
 
-userController.updateAccount = (req, res, next) => {
+userController.updateAccount = async (req, res, next) => {
     const { username, account } = req.params;
-    const { user, account_name, annual_return, balance } = req.body;
-    Account.findOneAndUpdate({ user: username, account_name: account }, {
-        user,
-        account_name,
-        annual_return,
-        balance,
-    }, { new: true })
-        .then((data) => {
-            res.locals.newAccount = data;
-            User.findOne({ username })
-                .then((user) => {
-                    res.locals.user = user;
-                    return next();
-                })
+    const { account_name, annual_return, balance } = req.body;
+    try {
+        const newAccount = await Account.findOneAndUpdate({ user: username, account_name: account }, {
+            account_name,
+            annual_return,
+            balance,
+        }, { new: true });
+        const user = await User.findOne({ username });
+        const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
+        updatedAccounts.push(newAccount);
+        const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
+        const updatedUser = await User.findOneAndUpdate(
+            { username },
+            {
+                accounts: updatedAccounts,
+                future_net_worth,
+                future_retirement_need
+            },
+            { new: true }
+        );
+        res.locals.user = updatedUser;
+        return next();
+    } catch (error) {
+        return next({
+            log: 'Error in userController.addAccount',
+            status: 400,
+            message: { err: 'Error when updating account' }
         })
-        .catch((err) => {
-            return next({
-                log: 'Error in userController.updateAccount',
-                status: 400,
-                message: { err: 'Error when updating account' }
-            })
-        })
+    }
 }
 
 userController.deleteAccount = async (req, res, next) => {
-    console.log('running')
     const { username, account } = req.params;
-    console.log(username + account);
     try {
         await Account.findOneAndDelete({ user: username, account_name: account });
         const user = await User.findOne({ username });
         const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
+        const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
         const updatedUser = await User.findOneAndUpdate(
             { username },
-            { accounts: updatedAccounts },
+            {
+                accounts: updatedAccounts,
+                future_net_worth,
+                future_retirement_need
+            },
             { new: true }
         );
+
         res.locals.user = updatedUser;
         return next();
     } catch (err) {
@@ -198,37 +200,10 @@ userController.deleteAccount = async (req, res, next) => {
             message: { err: 'Error occurred during account deletion' }
         });
     }
-    // Account.findOneAndDelete({ user: username, account_name: account })
-    //     .then(() => {
-    //         User.findOne({ username })
-    //             .then((user) => {
-    //                 const { accounts } = user.accounts;
-    //                 for (let i = 0; i < accounts.length; i++) {
-    //                     if (accounts[i].account_name === account) {
-    //                         accounts[i] = accounts[i + 1];
-    //                         if (i === accounts.length - 1) {
-    //                             accounts[i] = undefined;
-    //                         };
-    //                     };
-    //                 };
-    //                 User.findOneAndUpdate({ username }, { accounts }, { new: true })
-    //                     .then((user) => {
-    //                         res.locals.user = user;
-    //                         return next();
-    //                     })
-    //             })
-    //     })
-    //     .catch((err) => {
-    //         return next({
-    //             log: 'Error in userController.deleteAccount',
-    //             status: 400,
-    //             message: { err: 'Error when deleting account' }
-    //         })
-    //     })
 }
 
 
-const calculateFinancials = async (user, updatedAccounts = user.accounts) => {
+const calculateFinancials = (user, updatedAccounts = user.accounts) => {
     let future_net_worth = 0;
     let future_retirement_need = 0;
 

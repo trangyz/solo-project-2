@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 const AccountCard = (props) => {
     return (
-        <div>
+        <div className='account-card'>
             <div>Account name</div>
             <input name="account_name" type="text" placeholder={props.account_name}></input>
 
@@ -11,6 +11,7 @@ const AccountCard = (props) => {
 
             <div>Annual return</div>
             <input name="annual_return" type="text" placeholder={props.annual_return}></input>
+            <button>Delete account</button>
         </div>
     )
 }

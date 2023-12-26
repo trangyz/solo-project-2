@@ -42,36 +42,30 @@ userController.verifyUser = (req, res, next) => {
         })
 }
 
-userController.getUser = (req, res, next) => {
-    const { username } = res.locals.user;
-    User.findOne({ username })
-        .then((user) => {
-            // if (!user) {
-            //     return res.status(400).next()
-            // };
-            res.locals.user = user;
-            return next();
-        })
-        .catch((err) => {
-            return next({
-                log: 'Error in userController.getUser',
-                status: 400,
-                message: { err: 'Error getting user' }
-            })
-        });
-}
+// userController.getUser = (req, res, next) => {
+//     const { username } = res.locals.user;
+//     User.findOne({ username })
+//         .then((user) => {
+//             // if (!user) {
+//             //     return res.status(400).next()
+//             // };
+//             res.locals.user = user;
+//             return next();
+//         })
+//         .catch((err) => {
+//             return next({
+//                 log: 'Error in userController.getUser',
+//                 status: 400,
+//                 message: { err: 'Error getting user' }
+//             })
+//         });
+// }
 
 userController.updateUser = async (req, res, next) => {
     const { username } = req.params;
     console.log(`received ${username} from req.params`)
 
-    // if not updating account data for an existing user, retrieve info from res.locals.user
-    // if (!res.locals.user) {
     const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
-    // otherwise, retrieve info from request body
-    // } else {
-    //     const { accounts, age, retirement_age, monthly_savings, retirement_spend } = res.locals.user;
-    // };
 
     // if (!age || !retirement_age) {
     //     return next({

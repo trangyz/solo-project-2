@@ -2,9 +2,9 @@
 
 [x] Render current accounts
 [ ] Update post logic
-[ ] Update log in logic
-[ ] Update future wealth calculation logic
-[ ] Clean up authentication 
+[x] Update log in logic
+[x] Update future wealth calculation logic
+[x] Clean up authentication 
 [ ] Add sign out?
 
 ## Challenges

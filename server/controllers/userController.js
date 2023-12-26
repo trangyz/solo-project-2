@@ -163,12 +163,6 @@ userController.updateAccount = async (req, res, next) => {
                 updatedAccounts.push(user.accounts[i]);
             }
         }
-        // console.log(updatedAccounts);
-        // const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
-        // console.log(`filtered accounts are ${updatedAccounts}`)
-        // updatedAccounts.push(newAccount);
-        // console.log(`updated new list of accounts to to ${updatedAccounts}`)
-
         const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
         const updatedUser = await User.findOneAndUpdate(
             { username },

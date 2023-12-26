@@ -16,7 +16,7 @@ const AccountCard = (props) => {
             <input
                 name="account_name"
                 type="text"
-                placeholder={props.account_name}
+                placeholder={"e.g. Robinhood"}
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
             />
@@ -25,8 +25,8 @@ const AccountCard = (props) => {
             <input
                 name="balance"
                 type="text"
-                placeholder={props.balance}
-                value={balance}
+                placeholder={"e.g. 1000"}
+                value={balance.toLocaleString('en-US', { style: 'currency', currency: "USD" })}
                 onChange={(e) => setBalance(e.target.value)}
             />
 
@@ -34,15 +34,15 @@ const AccountCard = (props) => {
             <input
                 name="annual_return"
                 type="text"
-                placeholder={props.annual_return}
-                value={annualReturn}
+                placeholder={"e.g. 0.10"}
+                value={annualReturn.toLocaleString('en-US', { style: 'percent' })}
                 onChange={(e) => setAnnualReturn(e.target.value)}
             />
             <button onClick={handleUpdate}>Update account</button>
-            <button onClick={() => { 
+            <button onClick={() => {
                 props.deleteAccount(props.account_name);
-                {handleUpdate} 
-                }}>Delete account</button>
+                { handleUpdate }
+            }}>Delete account</button>
         </div>
     )
 }

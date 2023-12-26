@@ -1,10 +1,8 @@
 ## To do
 
-[x] Render current accounts
-[ ] Update post logic
-[x] Update log in logic
-[x] Update future wealth calculation logic
-[x] Clean up authentication 
+
+[ ] Delete function not working
+[ ] Clean up authentication - use userID instead of username 
 [ ] Add sign out?
 
 ## Challenges

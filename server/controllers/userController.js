@@ -185,7 +185,6 @@ userController.deleteAccount = async (req, res, next) => {
     const { username, account } = req.params;
     try {
         await Account.findOneAndDelete({ user: username, account_name: account });
-
         const user = await User.findOne({ username });
         const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
         const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);

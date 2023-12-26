@@ -119,7 +119,7 @@ const Inputs = () => {
     }
 
     const accountsElems = user.accounts.map((acc, i) => (
-        <div key={i}>
+        <div key={acc._id}>
             <AccountCard
                 balance={acc.balance}
                 account_name={acc.account_name}

@@ -39,7 +39,10 @@ const AccountCard = (props) => {
                 onChange={(e) => setAnnualReturn(e.target.value)}
             />
             <button onClick={handleUpdate}>Update account</button>
-            <button onClick={() => { props.deleteAccount(props.account_name) }}>Delete account</button>
+            <button onClick={() => { 
+                props.deleteAccount(props.account_name);
+                {handleUpdate} 
+                }}>Delete account</button>
         </div>
     )
 }

@@ -167,6 +167,37 @@ const Inputs = () => {
         )
     }
 
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', { 'packages': ['corechart'] });
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Callback that creates and populates a data table,
+    // instantiates the pie chart, passes in the data and
+    // draws it.
+    function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', '');
+        data.addColumn('number', '$');
+        data.addRows([
+            ['What you will have', user.future_net_worth],
+            ['What you will need', user.future_retirement_need],
+        ]);
+
+        // Set chart options
+        var options = {
+            'title': 'Retirement Plan',
+            'width': 800,
+            'height': 300
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
 
     if (!user) {
         return <div>Loading...</div>;
@@ -174,54 +205,63 @@ const Inputs = () => {
 
     return (
         <div>
-            <h1>Welcome {user.username}</h1>
-            <div>Not {user.username}? <a href="/signout">Sign out</a></div>
+            <h1>Welcome to your dashboard, {user.username}</h1>
+            <div class="sign-out">Not {user.username}? <a href="/signout">Sign out</a></div>
+
             {accountsElems}
             {newAccountForm()}
-            <form onSubmit={handleUserSubmit} class="other-inputs">
+            <div class="small-container">
+                <div class="left">
+                    <form onSubmit={handleUserSubmit} class="other-inputs">
 
-                <div className='heading'>Planned monthly savings</div>
-                <input
-                    name="monthly_savings"
-                    type="text"
-                    placeholder={user.monthly_savings}
-                    value={user.monthly_savings}
-                    onChange={handleUserChange}
-                />
+                        <div className='heading'>Planned monthly savings</div>
+                        <input
+                            name="monthly_savings"
+                            type="text"
+                            placeholder={user.monthly_savings}
+                            value={user.monthly_savings}
+                            onChange={handleUserChange}
+                        />
 
-                <div class='heading'>Current age</div>
-                <input
-                    name="age"
-                    type="text"
-                    placeholder={user.age}
-                    value={user.age}
-                    onChange={handleUserChange}
-                />
+                        <div class='heading'>Current age</div>
+                        <input
+                            name="age"
+                            type="text"
+                            placeholder={user.age}
+                            value={user.age}
+                            onChange={handleUserChange}
+                        />
 
-                <div class="heading">Planned retirement age</div>
-                <input
-                    name="retirement_age"
-                    type="text"
-                    placeholder={user.retirement_age}
-                    value={user.retirement_age}
-                    onChange={handleUserChange}
-                />
+                        <div class="heading">Planned retirement age</div>
+                        <input
+                            name="retirement_age"
+                            type="text"
+                            placeholder={user.retirement_age}
+                            value={user.retirement_age}
+                            onChange={handleUserChange}
+                        />
 
-                <div class="heading">Monthly retirement spend</div>
-                <input
-                    name="retirement_spend"
-                    type="text"
-                    placeholder={user.retirement_spend}
-                    value={user.retirement_spend}
-                    onChange={handleUserChange}
-                />
+                        <div class="heading">Monthly retirement spend</div>
+                        <input
+                            name="retirement_spend"
+                            type="text"
+                            placeholder={user.retirement_spend}
+                            value={user.retirement_spend}
+                            onChange={handleUserChange}
+                        />
 
-                <div><button type="submit" id="submit-button">Calculate</button></div>
+                        <div><button type="submit" id="submit-button">Calculate</button></div>
 
-            </form>
-            <div class="result">
-            <div>You will have <b>${Math.round(user.future_net_worth).toLocaleString('en-US')}</b>.</div>
-            <div>You will need <b>${Math.round(user.future_retirement_need).toLocaleString('en-US')}</b>.</div>
+                    </form>
+                </div>
+                <div class="right">
+                    <div id="chart_div"></div>
+
+                    <div class="result">
+                        <div>You will have <b>${Math.round(user.future_net_worth).toLocaleString('en-US')}</b>.</div>
+                        <div>You will need <b>${Math.round(user.future_retirement_need).toLocaleString('en-US')}</b>.</div>
+                    </div>
+                </div>
             </div>
         </div>
     )

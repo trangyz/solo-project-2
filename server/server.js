@@ -47,18 +47,13 @@ app.get('/feed/', sessionController.isLoggedIn, (req, res) => {
     res.status(200).json(res.locals.user);
 });
 
-// //feed
-// app.get('/feed', (req, res) => {
-//     res.sendFile(path.resolve(__dirname, '../client/feed.html'));
-// })
-
 // add account
 app.post('/update/:username', userController.addAccount, (req, res) => {
     return res.status(200).send(res.locals.user);
 })
 
 // update account
-app.patch('/update/:username/:account', userController.updateAccount, (req, res) => {
+app.patch('/update/:username/:accountId', userController.updateAccount, (req, res) => {
     return res.status(200).send(res.locals.user);
 })
 

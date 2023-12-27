@@ -42,38 +42,12 @@ userController.verifyUser = (req, res, next) => {
         })
 }
 
-// userController.getUser = (req, res, next) => {
-//     const { username } = res.locals.user;
-//     User.findOne({ username })
-//         .then((user) => {
-//             // if (!user) {
-//             //     return res.status(400).next()
-//             // };
-//             res.locals.user = user;
-//             return next();
-//         })
-//         .catch((err) => {
-//             return next({
-//                 log: 'Error in userController.getUser',
-//                 status: 400,
-//                 message: { err: 'Error getting user' }
-//             })
-//         });
-// }
-
 userController.updateUser = async (req, res, next) => {
     const { username } = req.params;
     console.log(`received ${username} from req.params`)
 
     const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
 
-    // if (!age || !retirement_age) {
-    //     return next({
-    //         log: 'userController.updateUser',
-    //         status: 400,
-    //         message: { err: 'Missing information provided' }
-    //     });
-    // } else {
     try {
         const user = await User.findOneAndUpdate({ username }, {
             accounts,
@@ -141,13 +115,13 @@ userController.addAccount = async (req, res, next) => {
 
 userController.updateAccount = async (req, res, next) => {
     console.log('updateaccount running')
-    const { username, account } = req.params;
-    console.log(`received ${username} and ${account} from req.params`)
+    const { username, accountId } = req.params;
+    console.log(`received ${username} and ${accountId} from req.params`)
     const { account_name, annual_return, balance } = req.body;
     console.log(`received ${account_name}, ${annual_return} and ${balance} from req.body`)
 
     try {
-        const newAccount = await Account.findOneAndUpdate({ user: username, account_name: account }, {
+        const newAccount = await Account.findOneAndUpdate({ _id: accountId }, {
             account_name,
             annual_return,
             balance,
@@ -156,8 +130,8 @@ userController.updateAccount = async (req, res, next) => {
         const user = await User.findOne({ username });
         let updatedAccounts = [];
         for (let i = 0; i < user.accounts.length; i++) {
-            console.log(`${user.accounts[i].account_name} is equal to ${account}`)
-            if (user.accounts[i].account_name === account) {
+            console.log(`${user.accounts[i]._id} vs ${accountId}`)
+            if (user.accounts[i]._id.toString() === accountId) {
                 updatedAccounts.push(newAccount);
             } else {
                 updatedAccounts.push(user.accounts[i]);

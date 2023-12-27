@@ -2,6 +2,7 @@ import React, { useState, Component } from 'react';
 import { Link } from 'react-router-dom';
 
 const AccountCard = (props) => {
+    const [accountId, setAccountId] = useState(props.account_id);
     const [accountName, setAccountName] = useState(props.account_name);
     const [balance, setBalance] = useState(props.balance);
     const [annualReturn, setAnnualReturn] = useState(props.annual_return);
@@ -42,7 +43,7 @@ const AccountCard = (props) => {
                 onChange={(e) => setAnnualReturn(e.target.value)}
             />
             <button id="update-add-button" onClick={
-                () => props.updateAccount(accountName, annualReturn, balance)
+                () => props.updateAccount(accountId, accountName, annualReturn, balance)
             }>Update account</button>
             <button id="delete-button" onClick={() => {
                 const confirmDelete = window.confirm("Are you sure you want to delete this account?");

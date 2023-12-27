@@ -50,8 +50,8 @@ const Inputs = () => {
             .catch((err) => console.log('App: add account: ERROR: ', err))
     }
 
-    const updateAccount = (account_name, annual_return, balance) => {
-        fetch(`/update/${user.username}/${account_name}`, {
+    const updateAccount = (accountId, account_name, annual_return, balance) => {
+        fetch(`/update/${user.username}/${accountId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -121,6 +121,7 @@ const Inputs = () => {
     const accountsElems = user.accounts.map((acc, i) => (
         <div key={acc._id}>
             <AccountCard
+                account_id={acc._id}
                 balance={acc.balance}
                 account_name={acc.account_name}
                 annual_return={acc.annual_return}

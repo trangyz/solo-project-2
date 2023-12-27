@@ -144,7 +144,7 @@ const Inputs = () => {
                     onChange={handleNewAccountChange}
                 />
 
-                <div>Balance</div>
+                <div>Balance $</div>
                 <input
                     name="balance"
                     id="balance"
@@ -230,11 +230,10 @@ const Inputs = () => {
                 <div class="left">
                     <form onSubmit={handleUserSubmit} class="other-inputs">
 
-                        <div className='heading'>Planned monthly savings</div>
+                        <div className='heading'>Planned monthly savings ($)</div>
                         <input
                             name="monthly_savings"
                             type="text"
-                            placeholder={user.monthly_savings}
                             value={user.monthly_savings}
                             onChange={handleUserChange}
                         />
@@ -243,7 +242,6 @@ const Inputs = () => {
                         <input
                             name="age"
                             type="text"
-                            placeholder={user.age}
                             value={user.age}
                             onChange={handleUserChange}
                         />
@@ -252,16 +250,14 @@ const Inputs = () => {
                         <input
                             name="retirement_age"
                             type="text"
-                            placeholder={user.retirement_age}
                             value={user.retirement_age}
                             onChange={handleUserChange}
                         />
 
-                        <div class="heading">Monthly retirement spend</div>
+                        <div class="heading">Monthly retirement spend ($)</div>
                         <input
                             name="retirement_spend"
                             type="text"
-                            placeholder={user.retirement_spend}
                             value={user.retirement_spend}
                             onChange={handleUserChange}
                         />

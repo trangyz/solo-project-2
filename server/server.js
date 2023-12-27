@@ -32,7 +32,7 @@ app.get('/signup', (req, res) => {
     // res.status(200).sendFile(path.resolve(__dirname, '../client/signup.html'));
 });
 
-app.post('/signup', userController.createUser, cookieController.setSSIDCookie, sessionController.startSession, (req, res) => {
+app.post('/signup', userController.checkUsername, userController.createUser, cookieController.setSSIDCookie, sessionController.startSession, (req, res) => {
     res.status(200).redirect('../feed.html');
 })
 

@@ -3,6 +3,20 @@ const bcrypt = require('bcryptjs');
 
 const userController = {};
 
+userController.checkUsername = (req, res, next) => {
+    console.log('running check username')
+    const { username } = req.body;
+    User.findOne( {username })
+    .then((data) => {
+        console.log(data)
+        if (data) {
+            return res.status(409).json('Username already exists. Please go back and choose another one.');
+        } else {
+            return next();
+        }
+    })
+}
+
 userController.createUser = (req, res, next) => {
     const { username, password } = req.body;
     User.create({
@@ -46,18 +60,17 @@ userController.updateUser = async (req, res, next) => {
     const { username } = req.params;
     console.log(`received ${username} from req.params`)
 
-    const { accounts, age, retirement_age, monthly_savings, retirement_spend } = req.body;
-
+    const { age, retirement_age, monthly_savings, retirement_spend } = req.body;
+    console.log(`${age}, ${retirement_age}, ${monthly_savings}, ${retirement_spend}`)
     try {
         const user = await User.findOneAndUpdate({ username }, {
-            accounts,
             age,
             retirement_age,
             monthly_savings,
             retirement_spend,
         }, { new: true });
         const { future_net_worth, future_retirement_need } = calculateFinancials(user);
-
+        console.log(`${future_net_worth}, ${future_retirement_need}`)
         const updatedUser = await User.findOneAndUpdate(
             { username },
             {
@@ -199,6 +212,7 @@ const calculateFinancials = (user, updatedAccounts = user.accounts) => {
     let FV_current_accounts = 0;
     updatedAccounts.forEach((account) => {
         FV_current_accounts += account.balance * ((1 + account.annual_return/100) ** years)
+        console.log(FV_current_accounts)
     });
     future_net_worth = user.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
 

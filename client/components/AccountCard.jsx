@@ -28,13 +28,13 @@ const AccountCard = (props) => {
                 onChange={(e) => setAccountName(e.target.value)}
             />
 
-            <div>Balance</div>
+            <div>Balance $</div>
             <input
                 name="balance"
                 type="text"
                 id="balance"
                 placeholder={"e.g. 1000"}
-                value={balance.toLocaleString('en-US', { style: 'currency', currency: "USD" })}
+                value={balance.toLocaleString('en-US')}
                 onChange={(e) => setBalance(e.target.value)}
             />
 

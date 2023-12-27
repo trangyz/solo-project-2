@@ -1,3 +1,4 @@
+const session = require('express-session');
 const Session = require('../models/sessionModel');
 const { User } = require('../models/userModel');
 
@@ -10,8 +11,6 @@ sessionController.isLoggedIn = (req, res, next) => {
             if (!data) {
                 res.redirect('/signup');
             } else {
-                // User.findOne({ username: })
-                console.log(`session is ${data.user}`)
                 User.findOne({ username: data.user})
                 .then((user) => {
                     res.locals.user = user;
@@ -30,6 +29,12 @@ sessionController.startSession = (req, res, next) => {
             }
             return next();
         })
+}
+
+sessionController.endSession = (req, res, next) => {
+    const ssidCookie = req.cookies.ssid;
+    Session.findOneAndDelete({ cookieId: ssidCookie })
+    .then(() => next());
 }
 
 module.exports = sessionController;

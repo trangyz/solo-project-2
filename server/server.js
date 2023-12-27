@@ -72,6 +72,11 @@ app.delete('/delete/:username/:account', userController.deleteAccount, (req, res
     return res.status(200).send(res.locals.user);
 })
 
+// sign out
+app.get('/signout', sessionController.endSession, (req, res) => {
+    res.clearCookie('ssid');
+    res.redirect('/');
+})
 
 // 404
 app.use('*', (req, res) => {

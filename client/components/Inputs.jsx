@@ -175,6 +175,7 @@ const Inputs = () => {
     return (
         <div>
             <h1>Welcome {user.username}</h1>
+            <div>Not {user.username}? <a href="/signout">Sign out</a></div>
             {accountsElems}
             {newAccountForm()}
             <form onSubmit={handleUserSubmit} class="other-inputs">

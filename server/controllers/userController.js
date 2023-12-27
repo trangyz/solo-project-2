@@ -221,7 +221,7 @@ const calculateFinancials = (user, updatedAccounts = user.accounts) => {
     const years = user.retirement_age - user.age;
     let FV_current_accounts = 0;
     updatedAccounts.forEach((account) => {
-        FV_current_accounts += account.balance * ((1 + account.annual_return) ** years)
+        FV_current_accounts += account.balance * ((1 + account.annual_return/100) ** years)
     });
     future_net_worth = user.monthly_savings * 12 * ((1 + 0.07) ** years - 1) / 0.07 + FV_current_accounts;
 

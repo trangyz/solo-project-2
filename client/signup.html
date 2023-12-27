@@ -8,13 +8,19 @@
 
 <body>
     <header>
-        <h1>Sign Up</h1>
     </header>
-    Signup
-    <form method='POST' action='/signup'>
-      <input name="username" type="text" placeholder="username"></input>
-      <input name="password" type="password"></input>
-      <input type="submit" value="create user"></input>
-    </form>
+    <div class="container">
+        <h1>Sign Up</h1>
+        <form method='POST' action='/signup'>
+            <div>Username</div>
+            <div><input name="username" type="text" placeholder="username"></input></div>
+            <div>Password</div>
+            <div><input name="password" type="password"></input></div>
+            <button type="submit" id="submit-button">Create user</button>
+        </form>
+        <div><a href="./">Back to sign in</a></div>
+
+    </div>
 </body>
+
 </html>

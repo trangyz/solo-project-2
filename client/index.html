@@ -3,19 +3,24 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>My Solo Project</title>
+    <title>EconoMe</title>
 </head>
 
 <body>
     <header>
-        <h1>Plan your retirement</h1>
+
     </header>
-    <form method="POST" action='/login'>
-        <input name="username" type="text" placeholder="username"></input>
-        <input name="password" type="password" placeholder="password"></input>
-        <input type="submit" value="login">
-    </form>
-    <a href="./signup">Sign up</a>
+    <div class="container">
+        <h1>Welcome back to EconoMe</h1>
+        <form method="POST" action='/login'>
+            <div class="heading">Username</div>
+            <input name="username" type="text" placeholder="username"></input>
+            <div class="heading">Password</div>
+            <input name="password" type="password" placeholder="password"></input>
+            <div><button type="submit" id="submit-button">Log in</button></div>
+        </form>
+        <div> Not a client yet? <a href="./signup">Sign up</a></div>
+    </div>
 </body>
 
 </html>

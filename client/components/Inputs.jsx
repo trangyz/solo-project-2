@@ -136,6 +136,7 @@ const Inputs = () => {
                 <div>Account name</div>
                 <input
                     name="account_name"
+                    id="account_name"
                     type="text"
                     placeholder="e.g. Robinhood"
                     value={newAccount.account_name}
@@ -145,21 +146,23 @@ const Inputs = () => {
                 <div>Balance</div>
                 <input
                     name="balance"
+                    id="balance"
                     type="text"
                     placeholder="e.g. 1000"
                     value={newAccount.balance}
                     onChange={handleNewAccountChange}
                 />
 
-                <div>Annual return</div>
+                <div>Annual return %</div>
                 <input
                     name="annual_return"
                     type="text"
-                    placeholder="e.g. 0.10"
+                    id="return"
+                    placeholder="e.g. 10"
                     value={newAccount.annual_return}
                     onChange={handleNewAccountChange}
                 />
-                <button onClick={addAccount}>Add account</button>
+                <button id="update-add-button" onClick={addAccount}>Add account</button>
             </div>
         )
     }
@@ -171,11 +174,12 @@ const Inputs = () => {
 
     return (
         <div>
+            <h1>Welcome {user.username}</h1>
             {accountsElems}
             {newAccountForm()}
-            <form onSubmit={handleUserSubmit}>
+            <form onSubmit={handleUserSubmit} class="other-inputs">
 
-                <div>Planned monthly savings</div>
+                <div className='heading'>Planned monthly savings</div>
                 <input
                     name="monthly_savings"
                     type="text"
@@ -184,7 +188,7 @@ const Inputs = () => {
                     onChange={handleUserChange}
                 />
 
-                <div>Current age</div>
+                <div class='heading'>Current age</div>
                 <input
                     name="age"
                     type="text"
@@ -193,7 +197,7 @@ const Inputs = () => {
                     onChange={handleUserChange}
                 />
 
-                <div>Planned retirement age</div>
+                <div class="heading">Planned retirement age</div>
                 <input
                     name="retirement_age"
                     type="text"
@@ -202,7 +206,7 @@ const Inputs = () => {
                     onChange={handleUserChange}
                 />
 
-                <div>Monthly retirement spend</div>
+                <div class="heading">Monthly retirement spend</div>
                 <input
                     name="retirement_spend"
                     type="text"
@@ -211,12 +215,13 @@ const Inputs = () => {
                     onChange={handleUserChange}
                 />
 
-                <div><input type="submit" value="Calculate"></input></div>
+                <div><button type="submit" id="submit-button">Calculate</button></div>
 
             </form>
-            <div>You will have ${Math.round(user.future_net_worth)}.</div>
-            <div>You will need ${Math.round(user.future_retirement_need)}.</div>
-
+            <div class="result">
+            <div>You will have <b>${Math.round(user.future_net_worth).toLocaleString('en-US')}</b>.</div>
+            <div>You will need <b>${Math.round(user.future_retirement_need).toLocaleString('en-US')}</b>.</div>
+            </div>
         </div>
     )
 }

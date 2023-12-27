@@ -15,6 +15,7 @@ const AccountCard = (props) => {
             <div>Account name</div>
             <input
                 name="account_name"
+                id="account_name"
                 type="text"
                 placeholder={"e.g. Robinhood"}
                 value={accountName}
@@ -25,23 +26,28 @@ const AccountCard = (props) => {
             <input
                 name="balance"
                 type="text"
+                id="balance"
                 placeholder={"e.g. 1000"}
                 value={balance.toLocaleString('en-US', { style: 'currency', currency: "USD" })}
                 onChange={(e) => setBalance(e.target.value)}
             />
 
-            <div>Annual return</div>
+            <div>Annual return %</div>
             <input
                 name="annual_return"
                 type="text"
-                placeholder={"e.g. 0.10"}
-                value={annualReturn.toLocaleString('en-US', { style: 'percent' })}
+                id="return"
+                placeholder={"e.g. 10"}
+                value={annualReturn.toLocaleString('en-US')}
                 onChange={(e) => setAnnualReturn(e.target.value)}
             />
-            <button onClick={handleUpdate}>Update account</button>
-            <button onClick={() => {
-                props.deleteAccount(props.account_name);
-                { handleUpdate }
+            <button id="update-add-button" onClick={handleUpdate}>Update account</button>
+            <button id="delete-button" onClick={() => {
+                const confirmDelete = window.confirm("Are you sure you want to delete this account?");
+                if (confirmDelete) {
+                    props.deleteAccount(props.account_name);
+                    { handleUpdate };
+                }
             }}>Delete account</button>
         </div>
     )

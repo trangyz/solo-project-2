@@ -6,9 +6,9 @@ const AccountCard = (props) => {
     const [balance, setBalance] = useState(props.balance);
     const [annualReturn, setAnnualReturn] = useState(props.annual_return);
 
-    const handleUpdate = () => {
-        props.updateAccount(accountName, annualReturn, balance);
-    };
+    // const handleUpdate = () => {
+    //     props.updateAccount(accountName, annualReturn, balance);
+    // };
 
     return (
         <div className='account-card'>
@@ -41,12 +41,14 @@ const AccountCard = (props) => {
                 value={annualReturn.toLocaleString('en-US')}
                 onChange={(e) => setAnnualReturn(e.target.value)}
             />
-            <button id="update-add-button" onClick={handleUpdate}>Update account</button>
+            <button id="update-add-button" onClick={
+                () => props.updateAccount(accountName, annualReturn, balance)
+            }>Update account</button>
             <button id="delete-button" onClick={() => {
                 const confirmDelete = window.confirm("Are you sure you want to delete this account?");
                 if (confirmDelete) {
                     props.deleteAccount(props.account_name);
-                    { handleUpdate };
+                    // { handleUpdate };
                 }
             }}>Delete account</button>
         </div>

@@ -191,7 +191,10 @@ const Inputs = () => {
         var options = {
             'title': 'Retirement Plan',
             'width': 800,
-            'height': 300
+            'height': 300,
+            'hAxis': {
+                minValue: 0
+            }
         };
 
         // Instantiate and draw our chart, passing in some options.

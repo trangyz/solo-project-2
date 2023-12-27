@@ -69,8 +69,8 @@ const Inputs = () => {
             .catch((err) => console.log('App: update account: ERROR: ', err))
     }
 
-    const deleteAccount = (account_name) => {
-        fetch(`/delete/${user.username}/${account_name}`, {
+    const deleteAccount = (accountId) => {
+        fetch(`/delete/${user.username}/${accountId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -184,8 +184,8 @@ const Inputs = () => {
         data.addColumn('string', '');
         data.addColumn('number', '$');
         data.addRows([
-            ['What you will have', user.future_net_worth],
-            ['What you will need', user.future_retirement_need],
+            ['You will have', user.future_net_worth],
+            ['You will need', user.future_retirement_need],
         ]);
 
         // Set chart options
@@ -201,6 +201,18 @@ const Inputs = () => {
         // Instantiate and draw our chart, passing in some options.
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
         chart.draw(data, options);
+    }
+
+    const retirementConclusion = () => {
+        if (user.future_net_worth > user.future_retirement_need) {
+            return (
+                <div>You are on track for your retirement goals.</div>
+            )
+        } else {
+            return (
+                <div>You may need to adjust your retirement plan.</div>
+            )
+        }
     }
 
     if (!user) {
@@ -262,8 +274,9 @@ const Inputs = () => {
                     <div id="chart_div"></div>
 
                     <div class="result">
-                        <div>You will have <b>${Math.round(user.future_net_worth).toLocaleString('en-US')}</b>.</div>
-                        <div>You will need <b>${Math.round(user.future_retirement_need).toLocaleString('en-US')}</b>.</div>
+                        <div>At retirement, you will have <b>${Math.round(user.future_net_worth).toLocaleString('en-US')}</b>.</div>
+                        <div>At retirement, you will need <b>${Math.round(user.future_retirement_need).toLocaleString('en-US')}</b>.</div>
+                        {retirementConclusion()}
                     </div>
                 </div>
             </div>

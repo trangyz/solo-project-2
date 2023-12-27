@@ -63,7 +63,7 @@ app.patch('/update/:username', userController.updateUser, (req, res) => {
 })
 
 // delete account
-app.delete('/delete/:username/:account', userController.deleteAccount, (req, res) => {
+app.delete('/delete/:username/:accountId', userController.deleteAccount, (req, res) => {
     return res.status(200).send(res.locals.user);
 })
 

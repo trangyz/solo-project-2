@@ -160,11 +160,14 @@ userController.updateAccount = async (req, res, next) => {
 }
 
 userController.deleteAccount = async (req, res, next) => {
-    const { username, account } = req.params;
+    console.log('running deleteAccount')
+    const { username, accountId } = req.params;
+    console.log(`received ${username} and ${accountId} from req.params`)
+
     try {
-        await Account.findOneAndDelete({ user: username, account_name: account });
+        await Account.findOneAndDelete({ _id: accountId });
         const user = await User.findOne({ username });
-        const updatedAccounts = user.accounts.filter(acc => acc.account_name !== account);
+        const updatedAccounts = user.accounts.filter(acc => acc._id.toString() !== accountId);
         const { future_net_worth, future_retirement_need } = calculateFinancials(user, updatedAccounts);
 
         const updatedUser = await User.findOneAndUpdate(

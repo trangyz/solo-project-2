@@ -1,4 +1,4 @@
-import React, { useState, Component } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { Link } from 'react-router-dom';
 
 const AccountCard = (props) => {
@@ -10,6 +10,11 @@ const AccountCard = (props) => {
     // const handleUpdate = () => {
     //     props.updateAccount(accountName, annualReturn, balance);
     // };
+
+    useEffect(() => {
+        setBalance(props.balance);
+        setAnnualReturn(props.annual_return);
+    }, [props.balance, props.annual_return]);
 
     return (
         <div className='account-card'>
@@ -48,7 +53,7 @@ const AccountCard = (props) => {
             <button id="delete-button" onClick={() => {
                 const confirmDelete = window.confirm("Are you sure you want to delete this account?");
                 if (confirmDelete) {
-                    props.deleteAccount(props.account_name);
+                    props.deleteAccount(accountId);
                     // { handleUpdate };
                 }
             }}>Delete account</button>

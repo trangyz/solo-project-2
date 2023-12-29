@@ -1,9 +1,8 @@
 ## To do
 
-
-[ ] Delete function not working
 [ ] Clean up authentication - use userID instead of username 
-[ ] Add sign out?
+[ ] Render username check on same page
+[ ] Add error handling Clean up account data entry to accept decimal and dollar signs
 
 ## Challenges
 

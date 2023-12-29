@@ -18,8 +18,12 @@ mongoose.connect(mongoURI);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use('/client', express.static(path.resolve(__dirname, '../client')));
 
+if (process.env.NODE_EV === 'production') {
+    app.use('/client', express.static(path.resolve(__dirname, '../build')));
+} else {
+    app.use('/client', express.static(path.resolve(__dirname, '../client')));
+}
 
 //index
 app.get('/', (req, res) => {

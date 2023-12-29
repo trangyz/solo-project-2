@@ -5,20 +5,29 @@ const { User } = require('../models/userModel');
 const sessionController = {};
 
 sessionController.isLoggedIn = (req, res, next) => {
+    console.log('sessionController.isLoggedIn runnng');
     const ssidCookie = req.cookies.ssid;
     Session.findOne({ cookieId: ssidCookie })
         .then(data => {
             if (!data) {
                 res.redirect('/signup');
             } else {
+                console.log(`retrieved username is ${data.user}`);
                 User.findOne({ username: data.user})
                 .then((user) => {
+                    console.log(`found user ${user.username}`)
                     res.locals.user = user;
-                    console.log(user);
                     return next();
                 })
             }
-        });
+        })
+        .catch((err) => {
+            return next({
+                log: 'Error in sessionController.isLoggedIn',
+                status: 400,
+                message: { err: 'Error when verifying logged in session' }
+            })
+        })
 };
 
 sessionController.startSession = (req, res, next) => {

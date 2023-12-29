@@ -10,8 +10,8 @@ const userSchema = new Schema({
   accounts: [{}],
   age: Number,
   retirement_age: Number,
-  monthly_savings: Number,
-  retirement_spend: Number,
+  monthly_savings: {type: Number, default: 0},
+  retirement_spend: {type: Number, default: 0},
   future_net_worth: { type: Number, default: 0 },
   future_retirement_need: { type: Number, default: 0 }
 });

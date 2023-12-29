@@ -47,9 +47,8 @@ const AccountCard = (props) => {
                 value={annualReturn.toLocaleString('en-US')}
                 onChange={(e) => setAnnualReturn(e.target.value)}
             />
-            <button id="update-add-button" onClick={
-                () => props.updateAccount(accountId, accountName, annualReturn, balance)
-            }>Update account</button>
+            <button id="update-add-button" onClick={() => props.updateAccount(accountId, accountName, annualReturn, balance)}
+            >Update account</button>
             <button id="delete-button" onClick={() => {
                 const confirmDelete = window.confirm("Are you sure you want to delete this account?");
                 if (confirmDelete) {

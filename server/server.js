@@ -77,6 +77,11 @@ app.get('/signout', sessionController.endSession, (req, res) => {
     res.redirect('/');
 })
 
+app.get('/community', (req, res) => {
+    res.status(200).sendFile(path.resolve(__dirname, '../client/community.html'));
+})
+
+
 // 404
 app.use('*', (req, res) => {
     res.status(404).send('Page not found.');

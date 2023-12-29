@@ -44,7 +44,8 @@ module.exports = {
             '/feed': 'http://localhost:3000',
             '/update': 'http://localhost:3000',
             '/delete': 'http://localhost:3000',
-            '/signout': 'http://localhost:3000'
+            '/signout': 'http://localhost:3000',
+            '/community': 'http://localhost:3000',
         },
     },
     module: {

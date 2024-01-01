@@ -1,4 +1,4 @@
-const { update } = require('../models/sessionModel');
+// const { update } = require('../models/sessionModel');
 const { User, Account } = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 

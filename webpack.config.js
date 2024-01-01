@@ -5,7 +5,8 @@ module.exports = {
     entry: {
         index: './client/index.js',
         feed: './client/feed.js',
-        signup: './client/signup.js'
+        signup: './client/signup.js',
+        community: './client/community.js'
     },
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -28,6 +29,11 @@ module.exports = {
             filename: 'signup.html',
             template:'./client/signup.html',
             chunks: ['signup']
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'community.html',
+            template: './client/community.html',
+            chunks: ['community']
         })
     ],
     devServer: {

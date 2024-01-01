@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const userController = require('./controllers/userController');
 const cookieController = require('./controllers/cookieController');
 const sessionController = require('./controllers/sessionController');
+const messageController = require('./controllers/messageController');
 
 
 const PORT = 3000;
@@ -77,10 +78,21 @@ app.get('/signout', sessionController.endSession, (req, res) => {
     res.redirect('/');
 })
 
+// render community page
 app.get('/community', (req, res) => {
-    res.status(200).sendFile(path.resolve(__dirname, '../client/community.html'));
+    res.status(200).redirect('../community.html');
+    // res.status(200).sendFile(path.resolve(__dirname, '../client/community.html'));
 })
 
+// get new messages
+app.get('/community/messages', messageController.getMessages, (req, res) => {
+    res.status(200).send(res.locals.messages);
+})
+
+// add new message
+app.post('/community/messages', messageController.addMessage, (req, res) => {
+    res.status(200).send(res.locals.messages);
+})
 
 // 404
 app.use('*', (req, res) => {
